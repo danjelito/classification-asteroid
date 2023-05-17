@@ -35,7 +35,7 @@ if __name__ == "__main__":
         cv_scores= cross_validate(
             estimator = pipeline, 
             cv= cv, 
-            scoring= 'f1',
+            scoring= 'roc_auc',
             X= X, 
             y= y, 
             n_jobs= -1, 
