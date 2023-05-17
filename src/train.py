@@ -8,6 +8,7 @@ import module
 import config
 import model_dispatcher
 
+
 if __name__ == "__main__":
 
     df_train= pd.read_csv(config.TRAIN_SET)
@@ -18,11 +19,17 @@ if __name__ == "__main__":
     for model in model_dispatcher.models.keys():
 
         cv= StratifiedKFold(n_splits= 10, shuffle= True, random_state= config.RANDOM_STATE)
-        model= model_dispatcher.models[model]
+        # model= model_dispatcher.models[model]
 
+        # create predition pipeline
+        prediction= Pipeline([
+            ('model', model_dispatcher.models[model])
+        ])
+
+        # combine preprocessing and prediction pipeline
         pipeline= Pipeline([
             ('preprocessing', module.preprocessing),
-            ('prediction', model),
+            ('prediction', prediction)
         ])
 
         cv_scores= cross_validate(
@@ -32,7 +39,8 @@ if __name__ == "__main__":
             X= X, 
             y= y, 
             n_jobs= -1, 
-            return_train_score= True
+            return_train_score= True, 
+            verbose= 0
         )
 
         # create a df with scores
@@ -41,6 +49,7 @@ if __name__ == "__main__":
             model= model, 
             fold= list(range(10)),
         )
+
         all_cv_scores.append(cv_scores_df)
 
     # concat all dfs in results

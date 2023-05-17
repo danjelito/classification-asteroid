@@ -19,16 +19,15 @@ import numpy as np
 from skopt import space
 
 models = {
-    "dummy": DummyClassifier(),
-    "logres": LogisticRegression(),
+    "logres": LogisticRegression(max_iter= 10_000),
     "sgd": SGDClassifier(),
     "svc": SVC(),
     "knn": KNeighborsClassifier(),
-    "dt": DecisionTreeClassifier(),
-    "gp": GaussianProcessClassifier(),
-    "rf": RandomForestClassifier(),
-    "ada": AdaBoostClassifier(),
-    "gb": GradientBoostingClassifier(),
-    "xgb": XGBClassifier(),
-    "lgb": LGBMClassifier(),
+    # "dt": DecisionTreeClassifier(),
+    # "gp": GaussianProcessClassifier(),
+    # "rf": RandomForestClassifier(),
+    # "ada": AdaBoostClassifier(),
+    # "gb": GradientBoostingClassifier(),
+    # "xgb": XGBClassifier(),
+    # "lgb": LGBMClassifier(),
 }

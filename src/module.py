@@ -3,6 +3,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, FunctionTransformer
 from sklearn.impute import KNNImputer, SimpleImputer
 
+
 def clean_col(col):
     return col.lower().replace('(', ' ').strip().replace(')', ' ').strip().replace(' ', '_')
 
@@ -20,11 +21,8 @@ NUM_COLS = ['Absolute Magnitude', 'Est Dia in M(min)', 'Est Dia in M(max)', 'Epo
     'Relative Velocity km per sec', 'Miss Dist.(Astronomical)', 'Orbit Uncertainity', 'Minimum Orbit Intersection',
     'Jupiter Tisserand Invariant', 'Epoch Osculation', 'Eccentricity', 'Semi Major Axis', 'Inclination',
     'Asc Node Longitude', 'Orbital Period', 'Perihelion Distance', 'Perihelion Arg', 'Aphelion Dist',
-    'Perihelion Time', 'Mean Anomaly', 'Mean Motion'
+    'Perihelion Time', 'Mean Anomaly', 'Mean Motion', 'Orbit ID'
 ]
-
-# categorical columns
-CAT_COLS = ['Orbit ID']
 
 # label
 LABEL = ['Hazardous']
@@ -40,11 +38,11 @@ NUM_NOT_SKEWED_COLS = [
 NUM_SKEWED_COLS = [
     'Est Dia in M(max)', 'Est Dia in M(min)', 'Epoch Osculation', 'Perihelion Time',
     'Orbital Period', 'Minimum Orbit Intersection', 'Inclination', 'Aphelion Dist', 'Semi Major Axis',
-    'Relative Velocity km per sec'
+    'Relative Velocity km per sec', 'Orbit ID'
 ]
 
 # check column list with assertion
-assert sorted(NUM_COLS + CAT_COLS + LABEL) == sorted(USED_COLS)
+assert sorted(NUM_COLS + LABEL) == sorted(USED_COLS)
 assert sorted(NUM_SKEWED_COLS + NUM_NOT_SKEWED_COLS) == sorted(NUM_COLS)
 
 # numerical pipeline
@@ -59,20 +57,8 @@ num_skewed_pipe = Pipeline([
     ('scale', RobustScaler())
 ])
 
-# transformer to convert int to str
-convert_to_str = FunctionTransformer(lambda x: x.astype(str), feature_names_out= 'one-to-one')
-
-# categorical pipeline
-cat_pipe = Pipeline([
-    ('cast', convert_to_str),
-    ('impute', SimpleImputer(strategy= 'constant', fill_value= 'NONE')),
-    ('encode', OneHotEncoder(drop= 'first', sparse_output= False, handle_unknown= 'ignore')),
-    ('scale', StandardScaler())
-])
-
 # full preprocessing pipeline
 preprocessing= ColumnTransformer([
     ('numerical', num_pipe, [clean_col(col) for col in NUM_NOT_SKEWED_COLS]),
     ('numerical_skewed', num_skewed_pipe, [clean_col(col) for col in NUM_SKEWED_COLS]),
-    ('cat', cat_pipe, [clean_col(col) for col in CAT_COLS])
 ])
