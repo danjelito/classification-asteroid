@@ -1,7 +1,10 @@
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder
+from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, FunctionTransformer
 from sklearn.impute import KNNImputer, SimpleImputer
+
+def clean_col(col):
+    return col.lower().replace('(', ' ').strip().replace(')', ' ').strip().replace(' ', '_')
 
 # columns that are used 
 USED_COLS = [
@@ -56,16 +59,20 @@ num_skewed_pipe = Pipeline([
     ('scale', RobustScaler())
 ])
 
+# transformer to convert int to str
+convert_to_str = FunctionTransformer(lambda x: x.astype(str), feature_names_out= 'one-to-one')
+
 # categorical pipeline
 cat_pipe = Pipeline([
+    ('cast', convert_to_str),
     ('impute', SimpleImputer(strategy= 'constant', fill_value= 'NONE')),
-    ('encode', OneHotEncoder(drop= 'first', sparse= False)),
+    ('encode', OneHotEncoder(drop= 'first', sparse_output= False, handle_unknown= 'ignore')),
     ('scale', StandardScaler())
 ])
 
 # full preprocessing pipeline
 preprocessing= ColumnTransformer([
-    ('numerical', num_pipe, NUM_NOT_SKEWED_COLS),
-    ('numerical_skewed', NUM_SKEWED_COLS, NUM_SKEWED_COLS),
-    ('cat', cat_pipe, CAT_COLS)
+    ('numerical', num_pipe, [clean_col(col) for col in NUM_NOT_SKEWED_COLS]),
+    ('numerical_skewed', num_skewed_pipe, [clean_col(col) for col in NUM_SKEWED_COLS]),
+    ('cat', cat_pipe, [clean_col(col) for col in CAT_COLS])
 ])

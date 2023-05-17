@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 from sklearn.model_selection import train_test_split
 
@@ -13,12 +12,12 @@ if __name__ == "__main__":
     # map label column to 0 and 1
     # clean column name
     df_clean = (df
-        .assign(Hazardous = df[module.LABEL[0]].map({True : 1, False : 0}))
-        .rename(columns= lambda c: c.lower().replace('(', ' ').strip().replace(')', ' ').strip().replace(' ', '_'))            
+        .assign(Hazardous = df['Hazardous'].map({True : 1, False : 0}))
+        .rename(columns= lambda c: module.clean_col(c))            
     )
     
-    X= df.drop(columns = module.LABEL)
-    y= df.loc[:, module.LABEL]
+    X= df_clean.drop(columns = 'hazardous')
+    y= df_clean.loc[:, 'hazardous']
 
     # train test split
     X_train, X_test, y_train, y_test= train_test_split(
@@ -36,3 +35,5 @@ if __name__ == "__main__":
     # save df
     train_set.to_csv(config.TRAIN_SET, index= False)
     test_set.to_csv(config.TEST_SET, index= False)
+
+    print('Finish.')
