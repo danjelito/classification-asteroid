@@ -14,12 +14,16 @@ if __name__ == "__main__":
     df_train= pd.read_csv(config.TRAIN_SET)
     X= df_train.drop(columns= 'hazardous')
     y= df_train.loc[:, 'hazardous']
-    all_cv_scores= []
+    
+    all_model_scores= []
 
     for model in model_dispatcher.models.keys():
 
-        cv= StratifiedKFold(n_splits= 10, shuffle= True, random_state= config.RANDOM_STATE)
-        # model= model_dispatcher.models[model]
+        fold= StratifiedKFold(
+            n_splits= 10, 
+            shuffle= True, 
+            random_state= config.RANDOM_STATE
+        )
 
         # create predition pipeline
         prediction= Pipeline([
@@ -34,9 +38,9 @@ if __name__ == "__main__":
             ('prediction', prediction)
         ])
 
-        cv_scores= cross_validate(
+        model_scores= cross_validate(
             estimator = pipeline, 
-            cv= cv, 
+            cv= fold, 
             scoring= 'f1',
             X= X, 
             y= y, 
@@ -47,13 +51,20 @@ if __name__ == "__main__":
 
         # create a df with scores
         # add model name and fold as new columns
-        cv_scores_df= pd.DataFrame(cv_scores).assign(
+        model_scores= pd.DataFrame(model_scores).assign(
             model= model, 
             fold= list(range(10)),
         )
 
-        all_cv_scores.append(cv_scores_df)
+        all_model_scores.append(model_scores)
 
     # concat all dfs in results
-    all_cv_scores = pd.concat(all_cv_scores)
-    print(all_cv_scores)
+    # group by model and get the average
+    all_model_scores = pd.concat(all_model_scores)
+    all_model_scores= (all_model_scores
+        .drop(columns= 'fold')
+        .groupby('model')
+        .mean()
+        .sort_values('test_score', ascending= False)
+    )
+    print(all_model_scores)

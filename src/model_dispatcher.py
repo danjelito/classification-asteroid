@@ -3,7 +3,6 @@ from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.gaussian_process import GaussianProcessClassifier
 from sklearn.ensemble import (
     RandomForestClassifier,
     AdaBoostClassifier, 
@@ -19,14 +18,14 @@ import numpy as np
 from skopt import space
 
 models = {
-    # "logres": LogisticRegression(max_iter= 10_000),
-    # "sgd": SGDClassifier(),
-    # "svc": SVC(kernel= 'sigmoid'),
-    # "knn": KNeighborsClassifier(),
-    # "dt": DecisionTreeClassifier(),
-    # "rf": RandomForestClassifier(),
-    # "ada": AdaBoostClassifier(),
-    # "gb": GradientBoostingClassifier(),
+    "logres": LogisticRegression(max_iter= 10_000),
+    "sgd": SGDClassifier(),
+    "svc": SVC(kernel= 'sigmoid'),
+    "knn": KNeighborsClassifier(),
+    "dt": DecisionTreeClassifier(),
+    "rf": RandomForestClassifier(),
+    "ada": AdaBoostClassifier(),
+    "gb": GradientBoostingClassifier(),
     "xgb": XGBClassifier(),
     "lgb": LGBMClassifier(),
 }
