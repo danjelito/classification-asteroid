@@ -2,6 +2,9 @@ from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, FunctionTransformer
 from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.decomposition import PCA
+
+import config
 
 
 def clean_col(col):
@@ -61,4 +64,9 @@ num_skewed_pipe = Pipeline([
 preprocessing= ColumnTransformer([
     ('numerical', num_pipe, [clean_col(col) for col in NUM_NOT_SKEWED_COLS]),
     ('numerical_skewed', num_skewed_pipe, [clean_col(col) for col in NUM_SKEWED_COLS]),
+])
+
+# feature compression pipeline
+compression= Pipeline([
+    ('pca', PCA(n_components= 2, random_state= config.RANDOM_STATE))
 ])
