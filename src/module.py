@@ -1,8 +1,10 @@
-from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
-from sklearn.preprocessing import StandardScaler, RobustScaler, OneHotEncoder, FunctionTransformer
-from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.decomposition import PCA
+from sklearn.feature_selection import SelectKBest
+from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import (FunctionTransformer, OneHotEncoder,
+                                   RobustScaler, StandardScaler)
 
 import config
 
@@ -12,35 +14,28 @@ def clean_col(col):
 
 # columns that are used 
 USED_COLS = [
-    'Absolute Magnitude', 'Est Dia in M(min)', 'Est Dia in M(max)', 'Epoch Date Close Approach', 'Relative Velocity km per sec',
+    'Absolute Magnitude', 'Est Dia in M(max)', 'Epoch Date Close Approach', 'Relative Velocity km per sec',
     'Miss Dist.(Astronomical)', 'Orbit ID', 'Orbit Uncertainity', 'Minimum Orbit Intersection',
-    'Jupiter Tisserand Invariant', 'Epoch Osculation', 'Eccentricity', 'Semi Major Axis', 'Inclination',
-    'Asc Node Longitude', 'Orbital Period', 'Perihelion Distance', 'Perihelion Arg', 'Aphelion Dist',
-    'Perihelion Time', 'Mean Anomaly', 'Mean Motion', 'Hazardous'
-]
-
-# all numerical columns
-NUM_COLS = ['Absolute Magnitude', 'Est Dia in M(min)', 'Est Dia in M(max)', 'Epoch Date Close Approach',
-    'Relative Velocity km per sec', 'Miss Dist.(Astronomical)', 'Orbit Uncertainity', 'Minimum Orbit Intersection',
-    'Jupiter Tisserand Invariant', 'Epoch Osculation', 'Eccentricity', 'Semi Major Axis', 'Inclination',
-    'Asc Node Longitude', 'Orbital Period', 'Perihelion Distance', 'Perihelion Arg', 'Aphelion Dist',
-    'Perihelion Time', 'Mean Anomaly', 'Mean Motion', 'Orbit ID'
+    'Jupiter Tisserand Invariant', 'Epoch Osculation', 'Eccentricity', 'Inclination',
+    'Asc Node Longitude', 'Orbital Period', 'Perihelion Distance', 'Perihelion Arg', 'Mean Anomaly', 'Hazardous'
 ]
 
 # label
 LABEL = ['Hazardous']
 
+# all numerical columns
+NUM_COLS = [col for col in USED_COLS if col not in LABEL]
+
 # numerical columns that are not skewed
 NUM_NOT_SKEWED_COLS = [
     'Absolute Magnitude', 'Epoch Date Close Approach', 'Miss Dist.(Astronomical)', 'Orbit Uncertainity', 
     'Jupiter Tisserand Invariant', 'Eccentricity', 'Asc Node Longitude', 'Perihelion Distance', 'Perihelion Arg',
-    'Mean Anomaly','Mean Motion'
+    'Mean Anomaly'
 ]
 
 # numerical columns that are skewed
 NUM_SKEWED_COLS = [
-    'Est Dia in M(max)', 'Est Dia in M(min)', 'Epoch Osculation', 'Perihelion Time',
-    'Orbital Period', 'Minimum Orbit Intersection', 'Inclination', 'Aphelion Dist', 'Semi Major Axis',
+    'Est Dia in M(max)', 'Epoch Osculation', 'Orbital Period', 'Minimum Orbit Intersection', 'Inclination', 
     'Relative Velocity km per sec', 'Orbit ID'
 ]
 
@@ -69,4 +64,9 @@ preprocessing= ColumnTransformer([
 # feature compression pipeline
 compression= Pipeline([
     ('pca', PCA(n_components= 2, random_state= config.RANDOM_STATE))
+])
+
+# feature selecction pipleine
+f_selection= Pipeline([
+    ('select_k_best', SelectKBest(k= 3))
 ])

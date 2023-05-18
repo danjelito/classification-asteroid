@@ -26,9 +26,10 @@ if __name__ == "__main__":
             ('model', model_dispatcher.models[model])
         ])
 
-        # combine preprocessing, compression and prediction pipeline
+        # combine preprocessing, f_selection, compression and prediction pipeline
         pipeline= Pipeline([
             ('preprocessing', module.preprocessing),
+            ('f_seelction', module.f_selection),
             ('compression', module.compression),
             ('prediction', prediction)
         ])
