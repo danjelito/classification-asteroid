@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-from sklearn.model_selection import cross_validate, StratifiedKFold
+from sklearn.model_selection import cross_val_score, StratifiedKFold
 from sklearn.pipeline import Pipeline
 from skopt import gp_minimize
 from skopt import space
@@ -41,14 +41,13 @@ def run_cv(
         ('prediction', prediction)
     ])
 
-    scores= cross_validate(
+    scores= cross_val_score(
         estimator = pipeline, 
         cv= fold, 
         scoring= 'f1',
         X= X, 
         y= y, 
         n_jobs= -1, 
-        return_train_score= False, 
         verbose= 0
     )
 
@@ -65,7 +64,7 @@ def optimize(
     partial_cv= partial(
         run_cv, 
         param_names= param_names, 
-        model= model_dispatcher.models[model], 
+        model= model, 
         X= X, 
         y= y, 
     )
@@ -90,24 +89,42 @@ if __name__ == "__main__":
     X= df_train.drop(columns= 'hazardous')
     y= df_train.loc[:, 'hazardous']
 
-    param_spaces = [
-        space.Integer(3, 15, name="max_depth"),
-        space.Integer(100, 1500, name="n_estimators"),
-        space.Categorical(["gini", "entropy"], name="criterion"),
-        space.Real(0.01, 1, prior="uniform", name="max_features")
-    ]
-    param_names = [
-        "max_depth",
-        "n_estimators",
-        "criterion",
-        "max_features"
-    ]
+    param_spaces = {
+        'rf' : [
+            space.Integer(3, 20, name="max_depth"),
+            space.Integer(100, 1500, name="n_estimators"),
+            space.Categorical(["gini", "entropy"], name="criterion"),
+            space.Real(0.01, 1, prior="uniform", name="max_features")
+        ], 
+        'knn' : [
+            space.Integer(3, 20, name="n_neighbors"),
+            space.Categorical(["uniform", "distance"], name="weights"),
+            space.Categorical(["auto", "ball_tree", 'kd_tree', 'brute'], name="algorithm"),
+            space.Integer(10, 100, name="leaf_size"),
+        ], 
+    }
+    param_names = {
+        'rf' : [
+            "max_depth",
+            "n_estimators",
+            "criterion",
+            "max_features"
+        ],
+        'knn' : [
+            "n_neighbors",
+            "weights",
+            "algorithm",
+            "leaf_size"
+        ]
+    }
+
+    model= 'knn'
 
     optimize(
-        param_names= param_names, 
-        param_spaces= param_spaces,
-        model= 'rf', 
+        param_names= param_names[model], 
+        param_spaces= param_spaces[model],
+        model= model_dispatcher.models[model], 
         X= X, 
         y= y,
-        n_calls= 20
+        n_calls= 10
     )
