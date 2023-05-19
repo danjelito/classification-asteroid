@@ -13,12 +13,24 @@ import model_dispatcher
 
 
 def run_cv(
-    param_spaces,
-    param_names,  
-    model, 
-    X, 
-    y
+    param_spaces: list,
+    param_names: list,  
+    X: pd.DataFrame, 
+    y: pd.DataFrame,
+    model
 ):
+    """Run cross valdiation to be passed to optimization function.
+
+    Args:
+        param_spaces (list): parameter spaces as described by skopt.space
+        param_names (list): names of parameters inside param_spaces
+        X (pd.DataFrame): X
+        y (pd.DataFrame): y
+        model (_type_): sklearn classifier object
+
+    Returns:
+        float: negative mean f1 scores across all folds
+    """
 
     params= dict(zip(param_names, param_spaces))
 
@@ -54,13 +66,24 @@ def run_cv(
     return np.mean(scores) * -1
 
 def optimize(
-    param_names, 
-    param_spaces,
+    param_spaces: list,
+    param_names: list,
     model, 
-    X, 
-    y,
-    n_calls
+    X: pd.DataFrame, 
+    y: pd.DataFrame,
+    n_calls: int
 ):
+    """Run gp_minimize to search for opimum HP.
+
+    Args:
+        param_spaces (list): parameter spaces as specified by skopt.space
+        param_names (list): names of parameters inside param_spaces
+        model (_type_): sklearn classifier object
+        X (pd.DataFrame): X
+        y (pd.DataFrame): y
+        n_calls (int): number of iterations
+    """
+
     partial_cv= partial(
         run_cv, 
         param_names= param_names, 
@@ -85,10 +108,13 @@ def optimize(
 
 if __name__ == "__main__":
 
+    # load train set
+    # spcify X and y
     df_train= pd.read_csv(config.SMOTE_TRAIN_SET)
     X= df_train.drop(columns= 'hazardous')
     y= df_train.loc[:, 'hazardous']
 
+    # specify param_spaces and names for all models that will be tested
     param_spaces = {
         'rf' : [
             space.Integer(3, 20, name="max_depth"),
@@ -118,8 +144,8 @@ if __name__ == "__main__":
         ]
     }
 
+    # run optimize
     model= 'knn'
-
     optimize(
         param_names= param_names[model], 
         param_spaces= param_spaces[model],
