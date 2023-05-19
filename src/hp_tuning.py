@@ -128,6 +128,12 @@ if __name__ == "__main__":
             space.Categorical(["auto", "ball_tree", 'kd_tree', 'brute'], name="algorithm"),
             space.Integer(10, 100, name="leaf_size"),
         ], 
+        'logres': [
+            space.Categorical(['l2'], name= 'penalty'), 
+            space.Real(0.00001, 1, prior="log-uniform", name= "C"),
+            space.Categorical([10_000], name= 'max_iter'), 
+            space.Categorical(['lbfgs', 'liblinear', 'newton-cg', 'newton-cholesky', 'sag', 'saga'], name= 'solver'), 
+        ],
     }
     param_names = {
         'rf' : [
@@ -141,11 +147,17 @@ if __name__ == "__main__":
             "weights",
             "algorithm",
             "leaf_size"
-        ]
+        ],
+        'logres': [
+            'penalty',
+            'C',
+            'max_iter',
+            'solver',
+        ],
     }
 
     # run optimize
-    model= 'knn'
+    model= 'logres'
     optimize(
         param_names= param_names[model], 
         param_spaces= param_spaces[model],
