@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 from sklearn.model_selection import cross_validate, StratifiedKFold
 from sklearn.pipeline import Pipeline
