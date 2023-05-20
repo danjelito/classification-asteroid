@@ -8,6 +8,7 @@ from sklearn.ensemble import (
     AdaBoostClassifier, 
     GradientBoostingClassifier,
     VotingClassifier,
+    BaggingClassifier,
     StackingClassifier
 )
 from xgboost import XGBClassifier
@@ -54,15 +55,20 @@ models = {
 
     # ensemble
     'hard_voting': VotingClassifier(
-        estimators= [lgb_tuned, knn_tuned, dt_tuned], 
+        estimators= [('lgb', lgb_tuned), ('knn', knn_tuned), ('dt', dt_tuned)], 
         voting= 'hard',
         n_jobs= -1, 
         verbose= 0
     ),
     'soft_voting': VotingClassifier(
-        estimators= [lgb_tuned, knn_tuned, dt_tuned], 
+        estimators= [('lgb', lgb_tuned), ('knn', knn_tuned), ('dt', dt_tuned)], 
         voting= 'soft',
         n_jobs= -1, 
         verbose= 0
     ),
+    'stacking': StackingClassifier(
+        estimators= [('lgb', lgb_tuned), ('knn', knn_tuned), ('dt', dt_tuned)], 
+        final_estimator= LogisticRegression ()
+    ),
+    'bagging': BaggingClassifier()
 }

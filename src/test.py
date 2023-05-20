@@ -25,6 +25,9 @@ if __name__ == "__main__":
         'knn_tuned', 
         'lgb_tuned', 
         'dt_tuned',
+        'hard_voting', 
+        'soft_voting', 
+        'bagging'
     ]
 
     for model in models:
