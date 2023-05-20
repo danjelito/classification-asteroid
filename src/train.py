@@ -10,7 +10,7 @@ import model_dispatcher
 
 if __name__ == "__main__":
 
-    df_train= pd.read_csv(config.SMOTE_TRAIN_SET)
+    df_train= pd.read_csv(config.TRAIN_SET)
     X= df_train.drop(columns= 'hazardous')
     y= df_train.loc[:, 'hazardous']
     

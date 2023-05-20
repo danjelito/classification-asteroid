@@ -11,6 +11,7 @@ import model_dispatcher
 
 if __name__ == "__main__":
 
+    # use resampled train set
     df_train= pd.read_csv(config.SMOTE_TRAIN_SET)
     X_train= df_train.drop(columns= 'hazardous')
     y_train= df_train.loc[:, 'hazardous'].values.ravel()
@@ -24,7 +25,6 @@ if __name__ == "__main__":
         'knn_tuned', 
         'lgb_tuned', 
         'dt_tuned',
-        'svc_tuned',
     ]
 
     for model in models:
@@ -52,10 +52,9 @@ if __name__ == "__main__":
 
         print(f'''
             Model       : {model}
-            Accuracy    : {accuracy}
-            F1          : {f1}
-            ROC AUC     : {roc_auc}
-            \n
+            Accuracy    : {accuracy: .5f}
+            F1          : {f1: .5f}
+            ROC AUC     : {roc_auc: .5f}
         ''')
 
         model_path= config.MODEL / f'{model}.pkl'

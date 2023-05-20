@@ -57,5 +57,5 @@ def create_train_test(
 
 if __name__ == '__main__':
     create_train_test(
-        oversampling= True
+        oversampling= False
     )
