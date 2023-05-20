@@ -21,9 +21,10 @@ if __name__ == "__main__":
 
 
     models = [
-        # 'rf', 
         'knn_tuned', 
-        'logres_tuned'
+        'lgb_tuned', 
+        'dt_tuned',
+        'svc_tuned',
     ]
 
     for model in models:
@@ -57,5 +58,5 @@ if __name__ == "__main__":
             \n
         ''')
 
-        model_path= config.MODEL / f'model.pkl'
+        model_path= config.MODEL / f'{model}.pkl'
         joblib.dump(pipeline, model_path)

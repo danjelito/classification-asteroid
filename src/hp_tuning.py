@@ -19,7 +19,7 @@ def run_cv(
     y: pd.DataFrame,
     model
 ):
-    """Run cross valdiation to be passed to optimization function.
+    '''Run cross valdiation to be passed to optimization function.
 
     Args:
         param_spaces (list): parameter spaces as described by skopt.space
@@ -30,7 +30,7 @@ def run_cv(
 
     Returns:
         float: negative mean f1 scores across all folds
-    """
+    '''
 
     params= dict(zip(param_names, param_spaces))
 
@@ -73,7 +73,7 @@ def optimize(
     y: pd.DataFrame,
     n_calls: int
 ):
-    """Run gp_minimize to search for opimum HP.
+    '''Run gp_minimize to search for opimum HP.
 
     Args:
         param_spaces (list): parameter spaces as specified by skopt.space
@@ -82,7 +82,7 @@ def optimize(
         X (pd.DataFrame): X
         y (pd.DataFrame): y
         n_calls (int): number of iterations
-    """
+    '''
 
     partial_cv= partial(
         run_cv, 
@@ -106,7 +106,7 @@ def optimize(
     ))
     print(best_params)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
 
     # load train set
     # spcify X and y
@@ -116,53 +116,65 @@ if __name__ == "__main__":
 
     # specify param_spaces and names for all models that will be tested
     param_spaces = {
-        'rf' : [
-            space.Integer(3, 20, name="max_depth"),
-            space.Integer(100, 1500, name="n_estimators"),
-            space.Categorical(["gini", "entropy"], name="criterion"),
-            space.Real(0.01, 1, prior="uniform", name="max_features")
+        'lgb' : [
+            space.Integer(3, 150, name='num_leaves'),
+            space.Integer(3, 300, name='max_depth'),
+            space.Integer(100, 400, name='max_bin'),
+            space.Real(0.00001, 1, prior='log-uniform', name= 'learning_rate'),
         ], 
         'knn' : [
-            space.Integer(3, 20, name="n_neighbors"),
-            space.Categorical(["uniform", "distance"], name="weights"),
-            space.Categorical(["auto", "ball_tree", 'kd_tree', 'brute'], name="algorithm"),
-            space.Integer(10, 100, name="leaf_size"),
+            space.Integer(3, 20, name='n_neighbors'),
+            space.Categorical(['uniform', 'distance'], name='weights'),
+            space.Categorical(['auto', 'ball_tree', 'kd_tree', 'brute'], name='algorithm'),
+            space.Integer(10, 100, name='leaf_size'),
         ], 
-        'logres': [
-            space.Categorical(['l2'], name= 'penalty'), 
-            space.Real(0.00001, 1, prior="log-uniform", name= "C"),
-            space.Categorical([10_000], name= 'max_iter'), 
-            space.Categorical(['lbfgs', 'liblinear', 'newton-cg', 'newton-cholesky', 'sag', 'saga'], name= 'solver'), 
+        'dt': [
+            space.Categorical(['gini', 'entropy', 'log_loss'], name= 'criterion'), 
+            space.Categorical(['best', 'random'], name= 'splitter'), 
+            space.Integer(1, 300, name='max_depth'),
+            space.Integer(1, 100, name='min_samples_leaf'),
+            space.Categorical(['sqrt', 'log2'], name= 'max_features'), 
+        ],
+        'svc': [
+            space.Real(0.00001, 100, prior='log-uniform', name= 'C'),
+            space.Categorical(['linear', 'poly', 'rbf', 'sigmoid'], name= 'kernel'), 
+            space.Categorical(['scale', 'auto'], name= 'gamma'), 
         ],
     }
     param_names = {
-        'rf' : [
-            "max_depth",
-            "n_estimators",
-            "criterion",
-            "max_features"
+        'lgb' : [
+            'num_leaves',
+            'max_depth',
+            'max_bin',
+            'learning_rate',
         ],
         'knn' : [
-            "n_neighbors",
-            "weights",
-            "algorithm",
-            "leaf_size"
+            'n_neighbors',
+            'weights',
+            'algorithm',
+            'leaf_size'
         ],
-        'logres': [
-            'penalty',
+        'dt' : [
+            'criterion',
+            'splitter',
+            'max_depth',
+            'min_samples_leaf',
+            'max_features',
+        ],
+        'svc' : [
             'C',
-            'max_iter',
-            'solver',
+            'kernel',
+            'gamma',
         ],
     }
 
     # run optimize
-    model= 'knn'
+    model= 'svc'
     optimize(
         param_names= param_names[model], 
         param_spaces= param_spaces[model],
         model= model_dispatcher.models[model], 
         X= X, 
         y= y,
-        n_calls= 200
+        n_calls= 100
     )

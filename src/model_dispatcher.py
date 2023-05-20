@@ -31,11 +31,29 @@ models = {
     'lgb': LGBMClassifier(),
     
     # tuned models
-    'rf_tuned': RandomForestClassifier(),
+    'lgb_tuned': LGBMClassifier(**{
+        'num_leaves': 52,
+        'max_depth': 90,
+        'max_bin': 331,
+        'learning_rate': 0.3040315881101998
+    }),
     'knn_tuned': KNeighborsClassifier(**{
-        'n_neighbors': 16, 'weights': 'distance', 'algorithm': 'auto', 'leaf_size': 11}
-    ),
-    'logres_tuned': LogisticRegression(**{
-        'penalty': 'l2', 'C': 1.0, 'max_iter': 10000, 'solver': 'saga'
+        'n_neighbors': 16,
+        'weights': 'distance',
+        'algorithm': 'auto',
+        'leaf_size': 11
+    }),
+    'dt_tuned': DecisionTreeClassifier(**{
+        'criterion': 'entropy',
+        'splitter': 'best',
+        'max_depth': 31,
+        'min_samples_leaf': 1,
+        'max_features': 'log2'
+    }),
+    'svc_tuned': SVC(**{
+        'probability': True, 
+        'C': 3.750965650683058, 
+        'kernel': 'rbf', 
+        'gamma': 'scale'
     }),
 }
