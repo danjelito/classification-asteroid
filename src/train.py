@@ -32,7 +32,7 @@ if __name__ == "__main__":
         # combine preprocessing, f_selection, compression and prediction pipeline
         pipeline= Pipeline([
             ('preprocessing', module.preprocessing),
-            ('f_seelction', module.f_selection),
+            ('f_selection', module.f_selection),
             ('compression', module.compression),
             ('prediction', prediction)
         ])

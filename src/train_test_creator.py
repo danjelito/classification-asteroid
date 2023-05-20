@@ -7,9 +7,15 @@ import module
 import config
 
 def create_train_test(
-    oversampling= False,
+    oversampling: False,
     train_path= config.TRAIN_SET, 
 ):
+    """Create training and test set and save the, to files.
+
+    Args:
+        oversampling (False): if True, do oversampling with SMOTE
+        train_path (_type_, optional): path to save resulting sets. Defaults to config.TRAIN_SET.
+    """
 
 
     df= pd.read_csv(config.OG_SET, usecols= module.USED_COLS)

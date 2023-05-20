@@ -157,12 +157,12 @@ if __name__ == "__main__":
     }
 
     # run optimize
-    model= 'logres'
+    model= 'knn'
     optimize(
         param_names= param_names[model], 
         param_spaces= param_spaces[model],
         model= model_dispatcher.models[model], 
         X= X, 
         y= y,
-        n_calls= 10
+        n_calls= 200
     )
