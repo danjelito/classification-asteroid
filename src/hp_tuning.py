@@ -116,6 +116,12 @@ if __name__ == '__main__':
 
     # specify param_spaces and names for all models that will be tested
     param_spaces = {
+        'rf' : [
+            space.Integer(3, 20, name="max_depth"),
+            space.Integer(100, 1500, name="n_estimators"),
+            space.Categorical(["gini", "entropy"], name="criterion"),
+            space.Real(0.01, 1, prior="uniform", name="max_features")
+    	], 
         'lgb' : [
             space.Integer(3, 150, name='num_leaves'),
             space.Integer(3, 300, name='max_depth'),
@@ -142,6 +148,12 @@ if __name__ == '__main__':
         ],
     }
     param_names = {
+        'rf' : [
+            'max_depth',
+            'n_estimators',
+            'criterion',
+            'max_features',
+        ],
         'lgb' : [
             'num_leaves',
             'max_depth',

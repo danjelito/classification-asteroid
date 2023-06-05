@@ -20,12 +20,12 @@ if __name__ == "__main__":
     X_test= df_test.drop(columns= 'hazardous')
     y_test= df_test.loc[:, 'hazardous'].values.ravel()
 
-
     models = [
-        'knn_tuned', 
-        'lgb_tuned', 
-        'dt_tuned',
+        'knn_tuned',
+        'stacking',
+        'rf', 
         'soft_voting', 
+        'lgb', 
     ]
 
     for model in models:

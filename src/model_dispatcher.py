@@ -37,6 +37,7 @@ dt_tuned= DecisionTreeClassifier(**{
 
 models = {
     # base models
+    'dummy': DummyClassifier(strategy= 'most_frequent'),
     'logres': LogisticRegression(max_iter= 10_000),
     'sgd': SGDClassifier(),
     'svc': SVC(kernel= 'sigmoid'),

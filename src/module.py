@@ -4,6 +4,7 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.impute import KNNImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import RobustScaler, StandardScaler
+from sklearn.feature_selection import mutual_info_classif
 
 import config
 
@@ -99,5 +100,5 @@ compression = Pipeline([
 
 # feature selecction pipleine
 f_selection = Pipeline([
-    ("select_k_best", SelectKBest(k= 3))
+    ("select_k_best", SelectKBest(k= 3, score_func= mutual_info_classif))
 ])

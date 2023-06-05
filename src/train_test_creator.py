@@ -26,6 +26,9 @@ def create_train_test(
         .assign(Hazardous = df['Hazardous'].map({True : 1, False : 0}))
         .rename(columns= lambda c: module.clean_col(c))            
     )
+
+    # shuffle df 
+    df_clean= df_clean.sample(frac= 1, random_state= config.RANDOM_STATE).reset_index(drop=True)
     
     X= df_clean.drop(columns = 'hazardous')
     y= df_clean.loc[:, 'hazardous']
